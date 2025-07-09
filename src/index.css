@@ -11,3 +11,25 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.slider-nav {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.slider-nav:hover {
+  background-color: #f8f9fa;
+}
+
+.swiper-slide {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  padding: 10px 5px;
+  height: auto;
+}
+
+.swiper-slide-active {
+  z-index: 1;
+}

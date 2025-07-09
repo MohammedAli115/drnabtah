@@ -1,0 +1,122 @@
+{
+  "navbar": {
+    "home": "Home",
+    "about": "About Us",
+    "reviews": "Customer Reviews",
+    "products": "Products",
+    "services": "Services",
+    "contact": "Contact Us",
+    "dashboard": "dashboard"
+  },
+  "hero": {
+    "title": "Take care of yourself and regain your confidence",
+    "subtitle": "Pamper your skin with a luxurious journey of complete care that delivers deep hydration, natural glow, lasting freshness, and unmatched confidence in every moment.",
+    "shopNow": "Shop Now",
+    "contactUs": "Contact Us",
+    "imageAlt": "Skincare products"
+  },
+  "login": {
+    "title": "Login",
+    "email_placeholder": "Email",
+    "password_placeholder": "Password",
+    "submit": "Login",
+    "forgot_password": "Forgot your password?",
+    "no_account": "Don't have an account? Create Account",
+    "email_required": "Email is required",
+    "password_required": "Password is required",
+    "success": "Login successful",
+    "error": "Login failed"
+  },
+  "logout": {
+    "confirm_title": "Are you sure?",
+    "confirm_text": "You will be logged out.",
+    "confirm_yes": "Yes, log me out",
+    "confirm_cancel": "Cancel",
+    "success_message": "Logged out successfully"
+  },
+  "signup": {
+    "title": "Sign Up",
+    "username_placeholder": "Username",
+    "email_placeholder": "Email",
+    "password_placeholder": "Password",
+    "confirm_password_placeholder": "Confirm Password",
+    "submit": "Create Account",
+    "have_account": "Already have an account? Login",
+    "username_required": "Username is required",
+    "email_required": "Email is required",
+    "password_required": "Password is required",
+    "password_mismatch": "Passwords do not match",
+    "success": "Account created successfully",
+    "error": "Sign up failed"
+  },
+  "slider": {
+    "allProducts": "All Products",
+    "previous": "Previous",
+    "next": "Next",
+    "addToCart": "Add to Cart",
+    "add": "Add",
+    "toCart": "to cart",
+    "addToFavorites": "Add to Favorites",
+    "removeFromFavorites": "Remove from Favorites",
+    "currency": "EGP"
+  },
+  "products": {
+    "allProducts": "All Products",
+    "searchPlaceholder": "Search for a product...",
+    "noProductsFound": "No products found with this name"
+  },
+  "about": {
+    "title": "About Us",
+    "description": "NABTAH is not just a brand…\nIt is a comprehensive philosophy of care, rooted in nature and flourishing through science.\n\nAt NABTAH, we believe that true beauty starts from the roots, and that effective solutions are never a coincidence — they are meticulously crafted, with precision and care, under the full medical supervision of specialists behind every product we offer.\n\nWe formulate each blend with knowledge, select every ingredient with intuition, and combine expertise, research, and potent natural herbs to give you results you can see in your beauty and feel in your confidence.\n\n✔ Free from: mineral oils, parabens, silicones, synthetic fragrances\n✔ Powered by advanced technologies like FiberHance™, DuraHance™, Ceramide Complex\n✔ Scientifically designed to suit even ultra-sensitive skin & hair\n\nAt NABTAH, we don't just provide a product, we offer you care that resembles you… authentic, elegant, and reassuring.\n\nNABTAH… from you, and to you.\nAnd we promise an experience like no other — just like you.",
+    "button": "Discover the secret of your beauty"
+  },
+
+  "offers": {
+    "heading": "Offers For You"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "header_line1": "We are here to listen to you, understand your needs, and support you every step. The NABTAH team is trained to respond to your inquiries accurately and with respect for your time and value.",
+    "header_line2": "We respond within 24 working hours… because our care begins by listening.",
+    "phone_placeholder": "Your phone number",
+    "message_placeholder": "Your message",
+    "submit": "Send"
+  },
+  "shippingPolicy": {
+    "title": "Shipping Policy",
+    "details": "At NABTAH, every order goes through meticulous steps of packaging, wrapping, and inspection to ensure it reaches you in perfect condition. We offer fast and secure shipping to all governorates within 2 to 5 business days, with instant order confirmation and continuous follow-up until delivery.",
+    "note": "Note: Due to the nature of personal care products, we do not accept returns or exchanges after delivery, to protect your safety and maintain your trust. We appreciate your understanding and your commitment—just like ours—to the highest standards of safety and hygiene."
+  },
+  "exchangePolicy": {
+    "title": "Exchange Policy",
+    "paragraph1": "Your satisfaction is our priority. We treat every order as if it were the first, with the utmost care and attention. We ensure all products are carefully inspected and packaged before leaving our warehouse.",
+    "paragraph2": "However, in the rare case that a product arrives with a manufacturing defect or damage during shipping, we’re happy to replace it under the following conditions:",
+    "bullet1": "Please contact us within 48 hours of receiving your order.",
+    "bullet2": "Include clear photos showing the issue.",
+    "bullet3": "After reviewing the case, a replacement will be shipped within 4–7 business days.",
+    "end": "We promise you a worry-free experience… because every detail matters to us!"
+  },
+  "footer": {
+    "home": "Home",
+    "about": "About Us",
+    "products": "Our Products",
+    "contact": "Contact Us",
+    "reviews": "Customer Reviews",
+    "shippingPolicy": "Shipping Policy",
+    "returns": "Returns & Exchanges",
+    "customerService": "Customer Service",
+    "mission": "Our Mission",
+    "vision": "Our Vision",
+    "whyNabta": "Why Nabtah",
+    "ourPromise": "Our Promise",
+    "sales": "Sales",
+    "customerSupport": " Customer Support",
+    "manufacturing": " Manufacturing",
+    "offers": " Offers",
+    "executiveManagement": "Executive Management",
+    "rights": "All rights reserved to Nabtah © 2025"
+  },
+  "whatsapp": {
+    "contact": "Contact a dermatologist"
+  }
+}

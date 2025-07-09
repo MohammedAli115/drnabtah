@@ -1,38 +1,100 @@
-.App {
-  text-align: center;
+body {
+  /* background-color: #6700dd00 !important; */
+  font-family: "Truculenta", sans-serif !important;
+  /* font-family: "Amiri", serif !important; */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.nav-link:hover {
+  color: #60d8d2 !important;
+}
+.navbar-toggler {
+  box-shadow: none !important;
+}
+.swiper .card,
+.swiper .card img {
+  transition: 0.4s;
+}
+.swiper .card img:hover {
+  transform: scale(1.1);
+}
+.swiper .icons-cart-like {
+  transition: 0.3s;
+
+  color: #000;
+}
+.swiper .card:hover .icons-cart-like {
+  bottom: -10px !important;
+  z-index: 9999;
+}
+.swiper .card:hover {
+  background-color: #e0f1f0 !important;
+}
+.offers .heading {
+  position: relative;
+  border-bottom: 1px solid #0ffef241;
+  border-radius: 5px;
+  overflow: hidden;
+  width: fit-content;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.offers .heading::before,
+.offers .heading::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: 50%;
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  transform: translateY(-50%);
+}
+.offers .heading::before {
+  right: 0;
+  border-right: 30px solid #0ffef241;
+}
+.offers .heading::after {
+  left: 0;
+  border-left: 30px solid #0ffef241;
+}
+.form_main {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.inputContainer {
+  margin-bottom: 20px;
 }
 
-.App-link {
-  color: #61dafb;
+.inputField {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #60d8d2;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.inputField:focus {
+  outline: none;
+  border-color: #2a445e;
+  box-shadow: 0 0 8px rgba(96, 216, 210, 0.5);
+}
+
+.button {
+  background-color: #60d8d2;
+  color: #fff;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: block;
+  width: 100%;
+}
+
+.button:hover {
+  background-color: #2a445e;
 }
