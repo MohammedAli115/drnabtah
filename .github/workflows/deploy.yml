@@ -18,10 +18,10 @@ jobs:
       - name: Build Project
         run: CI=false npm run build
 
-      - name: Verify Build Folder
+      - name: Verify build folder
         run: |
-          ls -R build/
-          echo "Build path ready."
+          echo "Local dir path: ./build/"
+          ls -la ./build/
 
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
