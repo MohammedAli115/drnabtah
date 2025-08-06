@@ -195,8 +195,6 @@ const Checkout = () => {
         <div className="col-lg-6 order-2 order-lg-1">
           <div
             style={{
-              // maxHeight: "75vh",
-              // overflowY: "auto",
               paddingRight: "10px",
             }}
           >

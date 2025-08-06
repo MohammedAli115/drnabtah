@@ -29,7 +29,7 @@ function Navbar() {
   const favorites = useSelector((state) => state.favorites);
   useEffect(() => {
     document.documentElement.setAttribute("dir", isArabic ? "rtl" : "ltr");
-  }, [i18n.language]);
+  }, [i18n.language, isArabic]);
 
   const isLoggedIn = !!localStorage.getItem("token");
 
@@ -125,7 +125,6 @@ function Navbar() {
                   {t("navbar.contact")}
                 </Link>
               </li>
-
             </ul>
           </div>
 
@@ -261,7 +260,6 @@ function Navbar() {
               {t("navbar.contact")}
             </Link>
           </li>
-
         </ul>
       </div>
 

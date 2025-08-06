@@ -1,7 +1,5 @@
-import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FaWhatsapp, FaFacebookF, FaInstagram } from "react-icons/fa";
 import Logo from "./Logo";
 import ContactIcons from "./ContactIcons";
 
