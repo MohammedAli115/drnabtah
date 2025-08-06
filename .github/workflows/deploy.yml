@@ -18,12 +18,19 @@ jobs:
       - name: Build Project
         run: CI=false npm run build
 
+      - name: Verify Build Folder
+        run: |
+          ls -R
+          echo "Build path: ${{ github.workspace }}/build/"
+
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        env:
+          DEBUG: "true"
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
-          local-dir: build/
-          server-dir: ${{ secrets.FTP_DIR }}
+          local-dir: ${{ github.workspace }}/build/
+          server-dir: ${{ secrets.FTP_DIR }}/
