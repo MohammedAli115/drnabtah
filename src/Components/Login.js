@@ -5,7 +5,6 @@ import Swal from "sweetalert2";
 import api from "../api/axios";
 import styles from "./Login.module.css";
 import Logo from "./Logo";
-import { useDispatch } from "react-redux";
 
 function Login() {
   const { t } = useTranslation();
