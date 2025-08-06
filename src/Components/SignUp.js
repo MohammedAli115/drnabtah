@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import axios from "axios";
-import styles from "./SignUp.module.css"; // نفس ملف Login module
+import api from "../api/axios";
+import styles from "./SignUp.module.css";
 import Logo from "./Logo";
 
 function SignUp() {
@@ -25,15 +25,12 @@ function SignUp() {
       return showToast("warning", t("signup.password_mismatch"));
 
     try {
-      const response = await axios.post(
-        "https://e-commerce-backend-production-dcd8.up.railway.app/api/auth/register",
-        {
-          username,
-          email,
-          password,
-          password_confirmation: confirmPassword,
-        }
-      );
+      const response = await api.post("auth/register", {
+        username,
+        email,
+        password,
+        password_confirmation: confirmPassword,
+      });
 
       if (response.data.status) {
         showToast("success", t("signup.success"));

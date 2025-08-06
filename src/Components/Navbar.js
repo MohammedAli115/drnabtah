@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import BtnChangLang from "./ChangeLang";
-import { Link, useNavigate } from "react-router-dom";
-import { FiShoppingCart, FiUser, FiMenu, FiLogOut } from "react-icons/fi";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import {
+  FiShoppingCart,
+  FiUser,
+  FiMenu,
+  FiLogOut,
+  FiHeart,
+} from "react-icons/fi";
 import { useSelector } from "react-redux";
 import ShoppingCart from "./ShoppingCart";
 import Swal from "sweetalert2";
@@ -11,23 +17,26 @@ import Logo from "./Logo";
 function Navbar() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
   const isArabic = i18n.language === "ar";
 
   const [showCart, setShowCart] = useState(false);
   const handleShowCart = () => setShowCart(true);
   const handleCloseCart = () => setShowCart(false);
 
-  const cart = useSelector((state) => state.cart);
-
+  const cartItems = useSelector((state) => state.cart.data.items || []);
+  const favorites = useSelector((state) => state.favorites);
   useEffect(() => {
     document.documentElement.setAttribute("dir", isArabic ? "rtl" : "ltr");
   }, [i18n.language]);
 
-  const isLoggedIn = !!localStorage.getItem("accessToken");
+  const isLoggedIn = !!localStorage.getItem("token");
 
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
+    localStorage.removeItem("token");
     localStorage.removeItem("userType");
+    localStorage.removeItem("session_id");
     navigate("/login");
   };
 
@@ -65,37 +74,58 @@ function Navbar() {
         <div className="container d-flex justify-content-between align-items-center">
           <Logo />
           <div className="d-none d-lg-flex flex-grow-1 justify-content-center">
-            <ul className="navbar-nav flex-row gap-4">
+            <ul className="navbar-nav flex-row gap-3">
               <li className="nav-item">
-                <Link className="nav-link fs-4" to="/">
+                <Link
+                  className={`nav-link fs-4 ${
+                    currentPath === "/" ? "active" : ""
+                  }`}
+                  to="/"
+                >
                   {t("navbar.home")}
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link fs-4" to="/about">
+                <Link
+                  className={`nav-link fs-4 ${
+                    currentPath === "/about" ? "active" : ""
+                  }`}
+                  to="/about"
+                >
                   {t("navbar.about")}
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link fs-4" to="/reviews">
+                <Link
+                  className={`nav-link fs-4 ${
+                    currentPath === "/reviews" ? "active" : ""
+                  }`}
+                  to="/reviews"
+                >
                   {t("navbar.reviews")}
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link fs-4" to="/products">
+                <Link
+                  className={`nav-link fs-4 ${
+                    currentPath === "/products" ? "active" : ""
+                  }`}
+                  to="/products"
+                >
                   {t("navbar.products")}
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link fs-4" to="/contact">
+                <Link
+                  className={`nav-link fs-4 ${
+                    currentPath === "/contact" ? "active" : ""
+                  }`}
+                  to="/contact"
+                >
                   {t("navbar.contact")}
                 </Link>
               </li>
-              {/* <li className="nav-item">
-                <Link className="nav-link fs-4" to="/dashboard">
-                  {t("navbar.dashboard")}
-                </Link>
-              </li> */}
+
             </ul>
           </div>
 
@@ -108,12 +138,25 @@ function Navbar() {
               onClick={handleShowCart}
             >
               <FiShoppingCart size={30} color="#60d8d2" />
-              {cart.length > 0 && (
-                <span className="position-absolute top-0 text-dark start-50 fs-6 translate-middle badge">
-                  {cart.length}
+              {cartItems.length > 0 && (
+                <span className="position-absolute top-0 text-dark start-50 fs-6 translate-middle badge bg-info">
+                  {cartItems.length}
                 </span>
               )}
             </div>
+
+            <Link
+              to="/wishlist"
+              className="position-relative"
+              style={{ cursor: "pointer" }}
+            >
+              <FiHeart size={28} color="#60d8d2" />
+              {favorites.length > 0 && (
+                <span className="position-absolute top-0 start-100 translate-middle badge bg-danger">
+                  {favorites.length}
+                </span>
+              )}
+            </Link>
 
             {isLoggedIn ? (
               <div
@@ -149,9 +192,8 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       <div
-        className="collapse navbar-collapse d-lg-none px-3 pb-2 "
+        className="collapse navbar-collapse d-lg-none px-3 pb-2"
         id="navbarSupportedContent"
         style={{
           backgroundColor: "#eafffe",
@@ -164,39 +206,74 @@ function Navbar() {
       >
         <ul className="navbar-nav w-100 py-3">
           <li className="nav-item">
-            <Link className="nav-link" to="/">
+            <Link
+              className={`nav-link ${currentPath === "/" ? "active" : ""}`}
+              to="/"
+            >
               {t("navbar.home")}
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/about">
+            <Link
+              className={`nav-link ${currentPath === "/about" ? "active" : ""}`}
+              to="/about"
+            >
               {t("navbar.about")}
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/reviews">
+            <Link
+              className={`nav-link ${
+                currentPath === "/reviews" ? "active" : ""
+              }`}
+              to="/reviews"
+            >
               {t("navbar.reviews")}
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/products">
+            <Link
+              className={`nav-link ${
+                currentPath === "/products" ? "active" : ""
+              }`}
+              to="/products"
+            >
               {t("navbar.products")}
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/services">
+            <Link
+              className={`nav-link ${
+                currentPath === "/services" ? "active" : ""
+              }`}
+              to="/services"
+            >
               {t("navbar.services")}
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/contact">
+            <Link
+              className={`nav-link ${
+                currentPath === "/contact" ? "active" : ""
+              }`}
+              to="/contact"
+            >
               {t("navbar.contact")}
             </Link>
           </li>
+
         </ul>
       </div>
 
       <ShoppingCart show={showCart} handleClose={handleCloseCart} />
+
+      <style>{`
+        .nav-link.active {
+          color: #60d8d2 !important;
+          font-weight: bold;
+          border-bottom: 2px solid #60d8d2;
+        }
+      `}</style>
     </>
   );
 }

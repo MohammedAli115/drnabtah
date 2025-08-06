@@ -2,9 +2,9 @@
 /* From Uiverse.io by Satwinder04 */
 .loader {
   position: relative;
-  width: 164px;
+  width: 100vh;
   height: 100px;
-  margin: 50px auto;
+  margin: 200px auto;
 }
 
 .loader div {

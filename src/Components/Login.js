@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import api from "../api/axios";
 import styles from "./Login.module.css";
 import Logo from "./Logo";
+import { useDispatch } from "react-redux";
 
 function Login() {
   const { t } = useTranslation();
@@ -18,18 +19,20 @@ function Login() {
       const response = await api.post("/auth/login", { email, password });
 
       if (response.data.status) {
-        localStorage.setItem("accessToken", response.data.data.token);
-        localStorage.setItem("userType", response.data.data.type);
+        const token = response.data.data.token;
+        const userType = response.data.data.type;
+
+        localStorage.setItem("token", token);
 
         Swal.fire({
-          icon: "success",
           title: t("login.success"),
+          icon: "success",
           timer: 1500,
           showConfirmButton: false,
         });
 
-        if (response.data.data.type === "admin") {
-          navigate("/dashboard");
+        if (userType === "admin") {
+          navigate("/");
         } else {
           navigate("/");
         }
@@ -76,9 +79,9 @@ function Login() {
             />
           </div>
 
-          <a className={styles.forgotLink} href="#f">
+          <Link to="/forgetPassword/send-code" className={styles.forgotLink}>
             {t("login.forgot_password")}
-          </a>
+          </Link>
 
           <button className={styles.button} type="submit">
             {t("login.submit")}

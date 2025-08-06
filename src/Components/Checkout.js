@@ -1,216 +1,304 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { removeFromCart, addToCart, decreaseQuantity } from "../features/cart/cartSlice";
+import {
+  fetchCart,
+  updateCartItem,
+  removeItemFromCart,
+} from "../features/cart/cartSlice";
+import { FiMinus, FiPlus, FiTrash } from "react-icons/fi";
+import CitiesSelect from "./CitiesSelect";
+import Swal from "sweetalert2";
+import api from "./../api/axios";
+import { useTranslation } from "react-i18next";
 
-const CheckoutPage = () => {
-  const cart = useSelector((state) => state.cart);
+const Checkout = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
-  const isArabic = i18n.language === "ar";
+  const { t } = useTranslation();
+  const { items, total, grandTotal } = useSelector((state) => state.cart.data);
+  const loading = useSelector((state) => state.cart.loading);
+  const error = useSelector((state) => state.cart.error);
+
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
+  const [addressId, setAddressId] = useState(null);
+  const [selectedCityId, setSelectedCityId] = useState("");
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [whatsappNum, setWhatsappNum] = useState("");
+  const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  useEffect(() => {
+    dispatch(fetchCart());
+  }, [dispatch]);
 
-  const submitOrder = async (orderData) => {
-    // المحاولة الأولى: JSONP
-    try {
-      await submitWithJsonp(orderData);
-      return true;
-    } catch (jsonpError) {
-      console.log('JSONP failed, trying POST');
+  useEffect(() => {
+    if (!loading && (!items || items.length === 0)) {
+      navigate("/products");
     }
+  }, [loading, items, navigate]);
 
-    // المحاولة الثانية: POST مع CORS proxy
-    try {
-      await submitWithPost(orderData);
-      return true;
-    } catch (postError) {
-      console.log('POST failed');
-      throw postError;
-    }
+  const formatPrice = (value) => `${Number(value).toFixed(2)} EGP`;
+
+  const handleQuantityChange = (item, change) => {
+    const newQty = item.quantity + change;
+    if (newQty < 1) return;
+    dispatch(updateCartItem({ itemId: item.id, quantity: newQty }));
   };
 
-  const submitWithJsonp = (data) => {
-    return new Promise((resolve, reject) => {
-      const callbackName = `jsonp_${Date.now()}`;
-      const timeout = 15000; // 15 ثانية
-
-      window[callbackName] = (response) => {
-        cleanup();
-        response.status === 'success' ? resolve(response) : reject(response);
-      };
-
-      const timer = setTimeout(() => {
-        cleanup();
-        reject(new Error('Request timeout'));
-      }, timeout);
-
-      const cleanup = () => {
-        clearTimeout(timer);
-        delete window[callbackName];
-        script.remove();
-      };
-
-      const script = document.createElement('script');
-      script.src = `https://script.google.com/macros/s/AKfycbx8rn2jZYhIFKFycDZ8v5j3YgLnAV4Wrhmz_xBxZ0tyUNXH60gEQAzcIUkNrNHWpK3F/exec?callback=${callbackName}&data=${encodeURIComponent(JSON.stringify(data))}`;
-      script.onerror = () => {
-        cleanup();
-        reject(new Error('Script load error'));
-      };
-      
-      document.body.appendChild(script);
+  const handleRemoveItem = (itemId) => {
+    Swal.fire({
+      title: t("checkout.confirmDeleteTitle"),
+      text: t("checkout.confirmDeleteText"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: t("checkout.confirm"),
+      cancelButtonText: t("checkout.cancel"),
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(removeItemFromCart({ itemId }));
+      }
     });
-  };
-
-  const submitWithPost = async (data) => {
-    const response = await fetch('https://corsproxy.io/?https://script.google.com/macros/s/AKfycbx8rn2jZYhIFKFycDZ8v5j3YgLnAV4Wrhmz_xBxZ0tyUNXH60gEQAzcIUkNrNHWpK3F/exec', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return await response.json();
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setError(null);
-
-    const customerData = {
-      name: e.target[0].value,
-      phone: e.target[1].value,
-      address: e.target[2].value,
-    };
-
-    const orderData = {
-      customer: customerData,
-      cart,
-      total,
-      date: new Date().toLocaleString(),
-    };
-
     try {
-      await submitOrder(orderData);
-      navigate("/invoice", { state: orderData });
-    } catch (error) {
-      setError(isArabic ? "فشل إرسال الطلب، يرجى المحاولة مرة أخرى" : "Failed to submit order, please try again");
-      console.error("Submission error:", error);
+      const response = await api.post("/addresses", {
+        phone,
+        address,
+        city_id: selectedCityId,
+        is_default: 1,
+      });
+      const newAddress = response.data.data;
+      setAddressId(newAddress.id);
+      localStorage.setItem("name", name);
+      localStorage.setItem("whatsappNum", whatsappNum);
+
+      Swal.fire({
+        icon: "success",
+        title: t("checkout.successTitle"),
+        timer: 1000,
+        showConfirmButton: false,
+      });
+
+      navigate("/order", {
+        state: {
+          cart: { items, total, grandTotal },
+          address: { ...newAddress, phone, address },
+          city: selectedCity,
+        },
+      });
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: t("checkout.errorTitle"),
+        text: t("checkout.errorText"),
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="container my-5" style={{ direction: isArabic ? "rtl" : "ltr" }}>
-      <h2 className="mb-4">{isArabic ? "إتمام الشراء" : "Checkout"}</h2>
+    <div
+      className="container my-5 py-5"
+      style={{ background: "linear-gradient(135deg, #ffffffff, #dff3f5)" }}
+    >
+      <h2 className="mb-5 text-center fw-bold">{t("checkout.title")}</h2>
 
-      {error && (
-        <div className="alert alert-danger">
-          {error}
+      <div
+        className="row g-4 flex-column flex-lg-row"
+        style={{ minHeight: "80vh" }}
+      >
+        {/* ✅ الفورم - يظهر فوق في الشاشات الصغيرة */}
+        <div className="col-lg-6 order-1 order-lg-2">
+          <div
+            style={{
+              // maxHeight: "75vh",
+              overflowY: "auto",
+              paddingRight: "10px",
+            }}
+          >
+            <form className="" onSubmit={handleSubmit}>
+              <h6 className="mb-3 fs-3 fw-bold">
+                {t("checkout.shippingAddress")}
+              </h6>
+
+              <div className="mb-3">
+                <label className="form-label">{t("checkout.name")}</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">{t("checkout.phone")}</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">{t("checkout.whatsapp")}</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={whatsappNum}
+                  onChange={(e) => setWhatsappNum(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">{t("checkout.address")}</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  required
+                />
+              </div>
+
+              <CitiesSelect
+                selectedCity={selectedCityId}
+                onChange={(id, cityObj) => {
+                  setSelectedCityId(id);
+                  setSelectedCity(cityObj);
+                }}
+              />
+
+              <button
+                type="submit"
+                className="btn fs-4 rounded py-2 border-0 w-100 mt-3"
+                style={{ backgroundColor: "#b5dae0ff", color: "#000" }}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? t("checkout.submitting") : t("checkout.submit")}
+              </button>
+            </form>
+          </div>
         </div>
-      )}
 
-      {cart.length === 0 ? (
-        <p className="text-muted">{isArabic ? "السلة فارغة" : "Your cart is empty"}</p>
-      ) : (
-        <div className="row">
-          <div className="col-md-7">
-            <ul className="list-group mb-4">
-              {cart.map((item) => (
-                <li key={item.id} className="list-group-item d-flex justify-content-between align-items-center">
-                  <div style={{ flex: 1 }}>
-                    <h6>{item.title}</h6>
-                    <p className="mb-1">
-                      {isArabic ? "السعر" : "Price"}: ${item.price}
-                    </p>
-                    <div className="btn-group" role="group">
+        {/* ✅ المنتجات */}
+        <div className="col-lg-6 order-2 order-lg-1">
+          <div
+            style={{
+              // maxHeight: "75vh",
+              // overflowY: "auto",
+              paddingRight: "10px",
+            }}
+          >
+            {loading ? (
+              <div className="text-center my-5">
+                <div className="spinner-border text-primary" />
+                <p className="mt-3 text-muted">{t("checkout.loading")}</p>
+              </div>
+            ) : error ? (
+              <div className="alert alert-danger text-center">
+                {t("checkout.error")}
+              </div>
+            ) : (
+              <>
+                {items?.map((item) => (
+                  <div
+                    key={item.id}
+                    className="d-flex align-items-center justify-content-between shadow-sm p-3 rounded mb-3 bg-white"
+                  >
+                    <div className="d-flex align-items-center gap-3">
+                      <img
+                        src={item.product?.image_url || "/placeholder.png"}
+                        alt={item.product?.name}
+                        style={{
+                          width: "70px",
+                          height: "70px",
+                          objectFit: "cover",
+                          borderRadius: "10px",
+                        }}
+                      />
+                      <div>
+                        <div className="fw-semibold">{item.product?.name}</div>
+                        <div className="text-muted small">
+                          {item.price} {t("checkout.each")}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="d-flex align-items-center gap-2">
                       <button
                         className="btn btn-sm btn-outline-secondary"
-                        onClick={() => dispatch(decreaseQuantity(item.id))}
+                        onClick={() => handleQuantityChange(item, -1)}
+                        disabled={item.quantity <= 1}
                       >
-                        -
+                        <FiMinus />
                       </button>
-                      <button className="btn btn-sm btn-light" disabled>
-                        {item.quantity}
-                      </button>
+                      <span className="fw-bold">{item.quantity}</span>
                       <button
                         className="btn btn-sm btn-outline-secondary"
-                        onClick={() => dispatch(addToCart(item))}
+                        onClick={() => handleQuantityChange(item, 1)}
                       >
-                        +
+                        <FiPlus />
                       </button>
                     </div>
-                  </div>
-                  <button
-                    className="btn btn-sm btn-danger"
-                    onClick={() => dispatch(removeFromCart(item.id))}
-                  >
-                    {isArabic ? "حذف" : "Remove"}
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <h5 className="text-end">
-              {isArabic ? "الإجمالي" : "Total"}: ${total.toFixed(2)}
-            </h5>
-          </div>
 
-          <div className="col-md-5">
-            <div className="card p-3">
-              <h5 className="mb-3">
-                {isArabic ? "معلومات العميل" : "Customer Info"}
-              </h5>
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label className="form-label">
-                    {isArabic ? "الاسم الكامل" : "Full Name"}
-                  </label>
-                  <input type="text" className="form-control" required />
+                    <div className="fw-bold text-success">
+                      {formatPrice(item.price * item.quantity)}
+                    </div>
+
+                    <button
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={() => handleRemoveItem(item.id)}
+                    >
+                      <FiTrash />
+                    </button>
+                  </div>
+                ))}
+
+                <div className="shadow-sm p-4 rounded bg-white">
+                  <h5 className="mb-3 fw-bold">{t("checkout.orderSummary")}</h5>
+
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>{t("checkout.subtotal")}:</span>
+                    <span>{formatPrice(total)}</span>
+                  </div>
+
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>{t("checkout.shipping")}:</span>
+                    <span>
+                      {formatPrice(selectedCity?.shipping_price || 0)}
+                    </span>
+                  </div>
+
+                  <hr />
+
+                  <div className="d-flex justify-content-between fs-5 fw-bold">
+                    <span>{t("checkout.total")}:</span>
+                    <span className="text-success">
+                      {formatPrice(
+                        Number(total || 0) +
+                          Number(selectedCity?.shipping_price || 0)
+                      )}
+                    </span>
+                  </div>
                 </div>
-                <div className="mb-3">
-                  <label className="form-label">
-                    {isArabic ? "رقم الهاتف" : "Phone Number"}
-                  </label>
-                  <input type="tel" className="form-control" required />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">
-                    {isArabic ? "العنوان" : "Address"}
-                  </label>
-                  <textarea className="form-control" rows="2" required></textarea>
-                </div>
-                <button
-                  type="submit"
-                  className="btn btn-success w-100"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-2"></span>
-                      {isArabic ? "جاري المعالجة..." : "Processing..."}
-                    </>
-                  ) : (
-                    isArabic ? "تأكيد الطلب" : "Place Order"
-                  )}
-                </button>
-              </form>
-            </div>
+              </>
+            )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
-export default CheckoutPage;
+export default Checkout;

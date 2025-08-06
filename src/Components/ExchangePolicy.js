@@ -1,29 +1,26 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 const ExchangePolicy = () => {
   const { t, i18n } = useTranslation();
   const isArabic = i18n.language === "ar";
 
-  const textStyle = {
-    color: "#2a445e",
-    lineHeight: "2",
-    fontSize: "1.1rem"
-  };
-
   return (
-    <div className="container my-5 py-5">
-      {/* العنوان */}
-      <div
-        className="text-center mb-5"
-        style={{ direction: isArabic ? "rtl" : "ltr" }}
-      >
+    <div
+      className="container py-3"
+      style={{
+        margin: "100px auto 30px",
+        borderRadius: "16px",
+        boxShadow: "0 4px 10px #00000033",
+      }}
+    >
+      <div className="text-center mb-5">
         <h2
           className="position-relative d-inline-block"
           style={{
             color: "#60d8d2",
             fontSize: "2.5rem",
-            fontWeight: "700"
+            fontWeight: "700",
           }}
         >
           {t("exchangePolicy.title")}
@@ -36,26 +33,35 @@ const ExchangePolicy = () => {
               width: "60%",
               height: "4px",
               backgroundColor: "#60d8d2",
-              borderRadius: "2px"
+              borderRadius: "2px",
             }}
           ></span>
         </h2>
       </div>
 
-      {/* النص والصورة - ينعكسوا في الشاشات الصغيرة */}
       <div
         className="row align-items-center flex-column-reverse flex-md-row"
         style={{ direction: isArabic ? "rtl" : "ltr" }}
       >
-        <div className="col-md-6 mt-4 mt-md-0">
-          <p style={textStyle}>{t("exchangePolicy.paragraph1")}</p>
-          <p style={textStyle}>{t("exchangePolicy.paragraph2")}</p>
-          <ul style={textStyle}>
+        <div
+          className="col-md-6 mt-4 mt-md-0 fs-5"
+          style={{ color: "#2a445e", lineHeight: "2" }}
+        >
+          <p>{t("exchangePolicy.paragraph1")}</p>
+          <p>{t("exchangePolicy.paragraph2")}</p>
+          <ul>
             <li>{t("exchangePolicy.bullet1")}</li>
             <li>{t("exchangePolicy.bullet2")}</li>
             <li>{t("exchangePolicy.bullet3")}</li>
           </ul>
-          <p style={textStyle}>{t("exchangePolicy.end")}</p>
+          <p>{t("exchangePolicy.end")}</p>
+          <Link
+            to="/contact"
+            className="btn btn-lg mt-1 px-4"
+            style={{ backgroundColor: "#1bd3c6ff", color: "#fff" }}
+          >
+            {isArabic ? "تواصلي معنا" : "Contact Us"}
+          </Link>
         </div>
 
         <div className="col-md-6 text-center">
@@ -64,6 +70,7 @@ const ExchangePolicy = () => {
             alt="Exchange Policy"
             className="img-fluid rounded"
             style={{ maxHeight: "400px", objectFit: "cover" }}
+            loading="lazy"
           />
         </div>
       </div>
